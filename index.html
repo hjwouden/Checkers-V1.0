@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+    <!-- Checkers V1.0 -- index.html-->
+    <html>
+        <head>
+            <title>How to Play Checkers</title>
+            <link href="style.css" rel="stylesheet" type="text/css" />
+        </head>
+        
+        <body>
+            <script src="Scripts/login.js"></script>
+            
+            <div class = "header">
+                <h1>How to Play Checkers</h1>
+            </div>
+             <p id="caption">img from: www.woodexpressions.com </p>
+            <p><a href = "Main.html" target="_blank">Go To Game Board</a></p>
+            
+               
+                <img id="wood" src="Images/woodBoard.jpg" alt="Wood Checker Board" >
+            
+            <div id= "highscores">
+                <h2>Fastest Win Times!</h2>
+                <p id="scores"> 1. <br> 2.<br> 3. </p>
+            </div> 
+            
+            <script src="Scripts/fromxml.js"></script>
+            
+            <div id="login">
+                <h2>Login Here</h2>
+                User Name: <input id="usrname" type="text" name="userName" value="">
+                Password: <input id="pwd" type="password" name="pwd" value="">
+                <button id= "loginButton" type="button" onclick="login()">Login</button>
+                <p id="loginStatus"></p>
+                    
+                
+            </div>
+            
+            <h2>How to Play</h2>
+                <ul>
+                    <li>Select if playing 1 player or 2 players.</li>
+                    <li>Click one of your teams pieces, then on the spot you want to move it to.</li>
+                    <li>Jump over the other teams pieces to remove them from the board.</li>
+                    <li>Win by removing all of the other teams pieces!</li>
+                </ul>
+            
+            <h2>Rules</h2>
+                <ol>
+                    <li>Gameboard is a 8x8 table, alternating white and black squares.</li>
+                    <li>Each Team has 12 pieces. Pieces stay on black squares at all times. </li>
+                    <li>Players move their teams pieces one square at a time diagonally.</li>
+                    <li>After one move it is the other players turn to move.</li>
+                    <li>Pieces must be moved forward in all moves, unless piece is a king.</li>
+                    <li>A piece becomes a king by reaching the furthest row of the opponents
+                    side</li>
+                    <li>A jump happens when a piece "Jumps" over an opponents piece to get
+                    to an open square to get to the open square behind it.</li>
+                    <li>When a jump is available, the player must jump.</li>
+                    <li>The winner is the player who has caputured all the pieces of the
+                    opposing team</li>
+                </ol>
+            
+            <h2>External Link</h2>
+            <p><a href = "http://www.indepthinfo.com/checkers/history.shtml" target="_blank">Learn About
+                Checkers History</a></p>
+            
+             <p></p>
+             
+             <h2>UPDATED: Preliminary Software Design</h2>
+                <h3>Variables</h3>
+                <p>//Integer values used in arrays / (validate move)<br>
+                //0 = White Space, (Invalid Move)(emptyspace)<br>
+                //1 = Red Piece, (Valid Move)<br>
+                //3 = Red Piece King<br>
+                //2 = White Piece<br>
+                //4 = White Piece King</p>
+                <ul>
+                    <li>Num_Players = (1 or 2)</li>
+                    <li>UPDATED: gameboard and valid moves will be single arrays, size 64. holding values represented as above. will use loops to check values in the tables to see when moves or valid or to draw the current game map out</li>
+                    <li>StartBoard = <br>
+                 [0,1,0,1,0,1,0,1, <br>
+                  1,0,1,0,1,0,1,0, <br>
+                  0,1,0,1,0,1,0,1,<br>
+                  0,0,0,0,0,0,0,0,<br>
+                  0,0,0,0,0,0,0,0,<br>
+                  2,0,2,0,2,0,2,0,<br>
+                  0,2,0,2,0,2,0,2,<br>
+                  2,0,2,0,2,0,2,0];</li>
+                    <li>VaildMove[]; //similar array as above, mapped to show all valid moves player can make, function validate move will check this with the move player is making to see if player will be allowed to make the move</li>
+                    <li>CurrentGame[]; //similar as above, current game layout, updated after each move.</li>
+                    <li>function newGame() { //sets gameboard up for a new game. pieces in default positions, need prompt to ask if sure you want to start a new game (progress will be lost) } </li>
+                    <li>function UpdateMove() { //1.validateMove(from, to, currentgame); 2.updateGameArray(from, to); 3.updateview(currentgame); } </li>
+                    <li>function validateMove(from, to, currentgame) { if move from -> to is valid, does not hit any other pieces, then return true}</li>
+                    <li>function updateGameArray(from, to) {if validateMove was true, then make changes to game array. replace # piece with 0 and put piece on 0}</li>
+                    <li>drawcurrentBoard(currentgame) { //takes a game board array and will draw out the pieces accordaing to the 0-4 model above. }</li>
+                </ul>
+                <h3>CSS Class Names</h3>
+                <p>changes to game board made throught attribute class name of object. style sheet checking</p>
+                <ul>
+                    <li>redPC = red Piece Square</li>
+                    <li>whitePC = white piece square</li>
+                    <li>redPCKing</li>
+                    <li>whitePCKing</li>
+                    <li>black = empty black square</li>
+                    <li>white = empty white square, not valid move ever</li>
+                </ul>
+                
+                
+                <h3>Description of how to play.</h3>
+                <p>Player will make move by clicking on a piece and moving it to a legal spot on the board.
+                    Moving to white square will not be allowed, only able to click on black squares.
+                    Position on board will be kept by grid number system.(2d array of ints) When object is clicked, square
+                    is sent to first function that will make sure it contains a piece of that players
+                    team. 
+                </p>
+                <h3>Functions/Methods</h3>
+                <ul>
+                    <li>CheckPiece(position) //if CheckPiece returns true, allow player to select the square with a piece as the one to move</li>
+                    <li>CheckSquareEmpty(position) //check to see if 2nd click is an empty square, then check if the move is legal.</li>
+                    <li>CheckMove(position1,position2) //if CheckMove returns true, move is legal and game board is updated with move on HTML table</li>
+                    <li>UpdateBoard() // will update the HTML gameboard with current moves</li>
+                    <li>NewGame() // will prompt if sure want to start a new game, then set board to default settings.</li>
+                    <li>CheckWinner() //after each move check to see if either team has 0 pieces left, if no pieces left then declare a winner!</li>
+                </ul>     
+        </body>
+    </html>

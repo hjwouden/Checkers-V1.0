@@ -1,0 +1,134 @@
+/* Checkers V1.0 ---style.css
+ * Comments Notes Colors
+ * 
+ *
+ * */
+.black{
+    background-color: black;
+    width: 50px;
+    height: 50px;
+}
+.white{
+    background-color: white;
+    width: 50px;
+    height: 50px;
+}
+.redPC{
+    background-image:url('Images/RedPC.png');
+    width: 50px;
+    height: 50px;
+}
+.whitePC{
+    background-image:url('Images/WhitePC.png');
+    width: 50px;
+    height: 50px;
+}
+.redPCKing{
+    background-image:url('Images/RedPCKing.png');
+    width: 50px;
+    height: 50px;
+}
+.whitePCKing{
+    background-image:url('Images/WhitePCKing.png');
+    width: 50px;
+    height: 50px;
+}
+.whitePCclicked{
+    background-image: url('Images/WhitePCclicked.png');
+    width: 50px;
+    height: 50px;
+}
+.whitePCKingclicked{
+    background-image: url('Images/WhitePCKingclicked.png');
+    width: 50px;
+    height: 50px;
+}.redPCclicked{
+    background-image: url('Images/RedPCclicked.png');
+    width: 50px;
+    height: 50px;
+}
+.redPCKingclicked{
+    background-image: url('Images/RedPCKingclicked.png');
+    width: 50px;
+    height: 50px;
+}
+#infoDiv{
+    background: black;
+    color: white;
+    width: 200px;
+    height: 500px;
+    padding: 10px;
+    border: 5px solid gray;
+    margin: 0px;
+    float: right;
+}
+#GameTitle{
+    width: 150px;
+    padding: 5px;
+    border: 5px solid gray;
+    margin: 0px;
+    top: 0;
+    left: 0;
+    background-color: white;
+}
+#TitleDiv{
+    position: relative;
+    top:0;
+    left: 0;
+    height: 70;
+}
+a{
+    color:#FF0000;    /* unvisited link */
+}
+
+h1{
+    margin-bottom: 0;
+}
+
+.header{
+    background-color:#FF3030;
+}
+body{
+    background-color:#F3F3F6;
+}
+
+td{
+  border-style: solid;
+  border-width: 3px;
+  border-color: #000000;
+  
+}
+table{
+    border: 10px solid #8A5C2E;
+    border-collapse: separate;
+}
+#wood{
+    width: 300px;
+    height: 300px;
+    float: right;
+    margin-right: 30px;
+}
+#caption{
+    float: right;
+    font-style:italic;
+    font-size:14px;
+}
+#loginStatus
+{
+    width: 150px;
+    background-color: white;
+    border: solid thin;
+    color: blue;
+}
+img{
+    width: 50px;
+    height: 50px;
+}
+#highscores{
+    float: right;
+    border-width: 8px;
+    border-style: solid;
+    border-color: gold;
+    background-color: white;
+    text-align: center;
+}

@@ -1,0 +1,36 @@
+<Checkers>
+    <highscores>
+        <high position="1">
+            <player>Jordy</player>
+            <time>4:22</time>
+        </high>
+        <high position="2">
+            <player>Annie</player>
+            <time>5:26</time>
+        </high>
+        <high position="3">
+            <player>Pete</player>
+            <time>10:35</time>
+        </high>
+        <high position="4">
+            <player>ESims</player>
+            <time>20:55</time>
+        </high>
+        <high position="5">
+            <player>Turtle</player>
+            <time>45:23</time>
+        </high>
+    </highscores>
+    <savedgame>
+        <gameboard>
+            <row>01010101</row>
+            <row>10101010</row>
+            <row>01010101</row>
+            <row>00000000</row>
+            <row>00000000</row>
+            <row>20202020</row>
+            <row>02020202</row>
+            <row>20202020</row>
+        </gameboard>
+    </savedgame>
+</Checkers>
