@@ -87,3 +87,41 @@ var SqNum = 0;
         body.appendChild(tbl)
     }
 document.createElement = tableCreate(8,8);
+
+
+
+//function takes a gameboard array, updates the view by changing cells className to correct label // part of the view
+function drawCurrentGameBoard(movepieces){
+    var k = 0;
+    for(var i = 0; i<8; i++){
+        for(var j = 0; j<8; j++){
+            var cell = gameboard.rows[i].cells[j];
+            if (movepieces[k] == 1) {
+                //piece is a red piece, set class to redPC
+                cell.className = "redPC";
+            }
+            else if (movepieces[k] == 2) {
+                //piece is a white piece, set class to whitePC
+                cell.className = "whitePC";
+            }
+            else if (movepieces[k] == 3) {
+                //piece is a red King, set class to redPCKing
+                cell.className = "redPCKing";
+            }
+            else if (movepieces[k] == 4) {
+                //piece is a white King, set class to whitePCKing
+                cell.className = "whitePCKing";
+            }
+            else if (movepieces[k] == 0) {
+                //board is empty, see if should be a white square or black.
+                if (ValidMove[k] == 1) {
+                    cell.className = "black";
+                }
+                else{
+                cell.className = "white";
+                }
+            }
+            k++;
+        }
+    }
+}

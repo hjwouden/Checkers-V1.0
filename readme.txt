@@ -1,4 +1,4 @@
-readme.txt
+readme.txt Checkers v1.0
 
 Currently, XML information is only displayed on the index.html page.
 

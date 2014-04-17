@@ -9,15 +9,10 @@
 //2 = White Piece
 //4 = White Piece King
 
-var Num_Players; //1 or 2 player game
+//var Num_Players; //1 or 2 player game
+//var Player turn = 1; //== 1 or 2 for reds or whites, allows you to click highlight those pieces and move them.
 
-
-var black = 1;
-var red = 2;
-var board;
-var PieceHighlighted = 0; // if a piece is highlighted will be 1, else 0 meaning nothing is selected;
-var HighlightedPieceNum = -1; // the number of the piece that is highlighted, so we can refer back to it, -1 when no piece is selected;
-
+//somewhere move piece function needs to check if the piece is on the back row to make it a king,
 
 //Array that is the layout of Starting Game
 var StartBoard = [0,1,0,1,0,1,0,1,
@@ -92,6 +87,7 @@ AnimateTitle();
 
 CurrentGame = SampleGameState;
 //function draws the starting Gameboard
+// this function should call somehting in the the view because it sets the view up. 
 function newGame(){
     var GameType = document.getElementById("gameType");
     var TypeVal = GameType.options[GameType.selectedIndex].value;
@@ -128,66 +124,6 @@ function newGame(){
     GameHistoryDebug();
 }
 
-function UpdateMove(){
-    //1 check if move is valid
-    validateMove(From, To, CurrentGame);
-    //2 update current game array
-    updateGameArray(From, To);
-    //3 update view, change className from piece to black, and from black to piece
-    drawCurrentGameBoard(CurrentGame);
-}
-
-//function takes a gameboard array, updates the view by changing cells className to correct label
-function drawCurrentGameBoard(movepieces){
-    var k = 0;
-    for(var i = 0; i<8; i++){
-        for(var j = 0; j<8; j++){
-            var cell = gameboard.rows[i].cells[j];
-            if (movepieces[k] == 1) {
-                //piece is a red piece, set class to redPC
-                cell.className = "redPC";
-            }
-            else if (movepieces[k] == 2) {
-                //piece is a white piece, set class to whitePC
-                cell.className = "whitePC";
-            }
-            else if (movepieces[k] == 3) {
-                //piece is a red King, set class to redPCKing
-                cell.className = "redPCKing";
-            }
-            else if (movepieces[k] == 4) {
-                //piece is a white King, set class to whitePCKing
-                cell.className = "whitePCKing";
-            }
-            else if (movepieces[k] == 0) {
-                //board is empty, see if should be a white square or black.
-                if (ValidMove[k] == 1) {
-                    cell.className = "black";
-                }
-                else{
-                cell.className = "white";
-                }
-            }
-            k++;
-        }
-    }
-}
-
-function updateGameArray(from, to){
-    //a move was made, update the array to reflect current
-    // game state. take from, set to 0, put team piece in to position
-    //check if they make any jumps
-    //check if on back row to become a king
-}
-
-function validateMove(from, to, currentgame){
-    //see if move from -> to is a valid move, not hitting pieces in current game
-    //taking available jumps.
-    //return error if problem.
-    //if no problems and move is good return true.
-}
-
-
 
 //adding event handlers to table cells
 var cells = document.getElementsByTagName("td");
@@ -197,54 +133,250 @@ for(i = 0; i<64; i++)
    cells[i].onclick = function() {
     var col = this.cellIndex;
     var row = this.parentNode.rowIndex;
-    //var cell = gameboard.rows[row].cells[col];
-    //alert("" + row + col);
-    //cell.className="clickedwhitePC";
     squareClicked(row, col);
    }
 } 
+var PlayerTurn = 0; // 0 for white, 1 for red
+var lastclickedPiece = -1;
+var lastclickedPosition = -1;
+var PieceHighlighted = 0; // if a piece is highlighted will be 1, else 0 meaning nothing is selected;
+var HighlightedPieceNum = -1; // the number of the piece that is highlighted, so we can refer back to it, -1 when no piece is selected;
 
+function ChangeTurn(){
+    if (PlayerTurn == 0) {
+        PlayerTurn = 1;
+    }
+    else{
+        PlayerTurn = 0;
+    }
+}
+function MovePiece(from, to){
+    // move the piece.
+    CurrentGame[to] = lastclickedPiece;
+    CurrentGame[from] = 0;
+    //reset the variables
+    PieceHighlighted = 0;
+    lastclickedPiece = -1;
+    lastclickedPosition = -1;
+    //Draw the new board
+    drawCurrentGameBoard(CurrentGame);
+    changeTurn();
+}
+function InvalidMove(){
+    //move was not valid, reset variables and re-draw board
+   // alert("invalid move");
+    lastclickedPiece = -1;
+    lastclickedPosition = -1;
+    PieceHighlighted = 0;
+    drawCurrentGameBoard(CurrentGame);
+}
+
+// Click Event Handler for Checkerboard. Takes the row and col in the table that was clicked.
 function squareClicked(row, col){
     var converted = (row * 8) + col;
 
-    if (PieceHighlighted == 1) {
-        //A piece is already selected, see if clicking on a move square or highlight new piece
-        drawCurrentGameBoard(CurrentGame);
-    }
+    if (PieceHighlighted == 1) {  // a piece is selected, check if moving, jumping, or highlight new piece
+        
+        if (ValidMove[converted] && (CurrentGame[converted] == 0)) { // square is black & open, validate move.
+           
+           if (lastclickedPiece == 1) { //Red Piece, can move +7 | +9
+                if ((converted-lastclickedPosition) == 7 || (converted-lastclickedPosition) == 9){
+                    MovePiece(lastclickedPosition, converted);
+                }
+                else{ //not next to us, is it a jump?
+                    if ((converted-lastclickedPosition) == 14){
+                        if ( ((CurrentGame[converted - 7]) == 2) || (CurrentGame[converted -7] == 4) ) {
+                            JumpedPiece(converted -7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == 18) {
+                        if ( ((CurrentGame[converted - 9]) == 2) || (CurrentGame[converted -9] == 4) ) {
+                            JumpedPiece(converted -9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else{ // was not a jump, or next to us, invalid move.
+                    InvalidMove(); // invalid move, pass invalid move string of who we are for better feedback in console
+                    }
+                }
+            }//endif Red Piece.
+            
+           if (lastclickedPiece == 2) { //White Piece, can move either -7 | -9
+                if ((converted-lastclickedPosition) == -7 || (converted-lastclickedPosition) == -9){
+                    MovePiece(lastclickedPosition, converted);
+                }
+                // check to see if we are jumping
+                else{ //not next to us, is it a jump?
+                    if ((converted-lastclickedPosition) == -14){
+                        if ( ((CurrentGame[converted + 7]) == 1) || (CurrentGame[converted  + 7] == 3) ) {
+                            JumpedPiece(converted +7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == -18) {
+                        if ( ((CurrentGame[converted + 9]) == 1) || (CurrentGame[converted  + 9] == 3) ) {
+                            JumpedPiece(converted +9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else{ //was not a jump, or next to us, invalid move.
+                    InvalidMove();
+                    }
+                }
+            }//endif White Piece
+            
+           if (lastclickedPiece == 3) { //Red King Piece, can move all directions.
+                if ((converted-lastclickedPosition) == -7 || (converted-lastclickedPosition) == -9 || (converted-lastclickedPosition) == 7 || (converted-lastclickedPosition) == 9){
+                    MovePiece(lastclickedPosition, converted);
+                }
+                else{
+                    if ((converted-lastclickedPosition) == 14){
+                        if ( ((CurrentGame[converted - 7]) == 2) || (CurrentGame[converted -7] == 4) ) {
+                            JumpedPiece(converted -7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == 18) {
+                        if ( ((CurrentGame[converted - 9]) == 2) || (CurrentGame[converted -9] == 4) ) {
+                            JumpedPiece(converted -9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == -14){
+                        if ( ((CurrentGame[converted + 7]) == 2) || (CurrentGame[converted  + 7] == 4) ) {
+                            JumpedPiece(converted + 7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == -18) {
+                        if ( ((CurrentGame[converted + 9]) == 2) || (CurrentGame[converted  + 9] == 4) ) {
+                            JumpedPiece(converted +9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else{ // was not a jump, or next to us, invalid move
+                    InvalidMove();
+                    }
+                }
+           } //endif Red King Piece
+           
+           if (lastclickedPiece == 4) { //White King Piece, can move all directions.
+                if ((converted-lastclickedPosition) == -7 || (converted-lastclickedPosition) == -9 || (converted-lastclickedPosition) == 7 || (converted-lastclickedPosition) == 9){
+                    MovePiece(lastclickedPosition, converted);
+                }
+                else{
+                    if ((converted-lastclickedPosition) == 14){
+                        if ( ((CurrentGame[converted - 7]) == 1) || (CurrentGame[converted -7] == 3) ) {
+                            JumpedPiece(converted -7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == 18) {
+                        if ( ((CurrentGame[converted - 9]) == 1) || (CurrentGame[converted -9] == 3) ) {
+                            JumpedPiece(converted -9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == -14){
+                        if ( ((CurrentGame[converted + 7]) == 1) || (CurrentGame[converted  + 7] == 3) ) {
+                            JumpedPiece(converted + 7);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else if ((converted-lastclickedPosition) == -18) {
+                        if ( ((CurrentGame[converted + 9]) == 1) || (CurrentGame[converted  + 9] == 3) ) {
+                            JumpedPiece(converted + 9);
+                            MovePiece(lastclickedPosition, converted);
+                        }
+                        else{InvalidMove();}
+                    }
+                    else{
+                    InvalidMove();
+                    }
+                }
+           }
+        } //endif White King Piece
+        
+        else{ //some other reason
+            InvalidMove();
+        }
+        
+    } //endif A piece was already highlighted.
+
+
+    else { // a piece is not highlighted, highlight a piece you want to move.
+        
     if (ValidMove[converted] == 0) {
-        //invalid move, do nothing
+        //invalid move, do nothing, clicked either white or empty square
     //    alert("clicked white square = " + converted );
     }
+
+// first click on a piece, find out which piece and make it look highlighted.
     else if (CurrentGame[converted] == 1) {
         //clicked on a red piece, highlight if first click
         var cell = gameboard.rows[row].cells[col];
         cell.className="redPCclicked";
         PieceHighlighted = 1;
         GameHistory(row, col);
+        //may first want to make sure that the last clicked var is free.
+        lastclickedPiece = CurrentGame[converted];
+        lastclickedPosition = converted;
         }
+
+
     else if (CurrentGame[converted] == 2) {
         //clicked on a white piece, highlight if first click
         var cell = gameboard.rows[row].cells[col];
         cell.className="whitePCclicked";
         PieceHighlighted = 1;
         GameHistory(row, col);
+        lastclickedPiece = CurrentGame[converted];
+        lastclickedPosition = converted;
     }
+
+
     else if (CurrentGame[converted] == 3) {
         //clicked on a white piece, highlight if first click
         var cell = gameboard.rows[row].cells[col];
         cell.className="redPCKingclicked";
         PieceHighlighted = 1;
         GameHistory(row, col);
+        lastclickedPiece = CurrentGame[converted];
+        lastclickedPosition = converted;
     }
+
+
     else if (CurrentGame[converted] == 4) {
         //clicked on a white piece, highlight if first click
         var cell = gameboard.rows[row].cells[col];
         cell.className="whitePCKingclicked";
         PieceHighlighted = 1;
         GameHistory(row, col);
+        lastclickedPiece = CurrentGame[converted];
+        lastclickedPosition = converted;
     }
-     
+   } // end else
 }
+
+
+function JumpedPiece(position){
+    CurrentGame[position] = 0;
+    // will also decrement the total number of pieces and check to see if the game is over. record the lost piece in game history.
+}
+
+// this should be part of the view as well, the game hisroty is visible, 
 function GameHistoryDebug(){
     var debuginfo = document.getElementById("gameHistory");
     var Selector = document.getElementById("gameType");
@@ -280,4 +412,4 @@ function moveTitle(){
             Title.style.left = (value-20) + "px";
             colorSelect--;
         }
-    }
+}
