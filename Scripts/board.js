@@ -125,3 +125,56 @@ function drawCurrentGameBoard(movepieces){
         }
     }
 }
+
+
+AnimateTitle();
+
+//move the the view.
+var Title = document.getElementById("TitleDiv");
+var value = 10;
+var colorSelect = 0;
+function AnimateTitle(){
+    var interval = setInterval(moveTitle, 150);
+    setTimeout(function(){ clearInterval(interval); }, 10000);
+    
+}
+//move to the view
+function moveTitle(){
+        value += 5;
+        Title.style.left = value + "px";
+        if (colorSelect == 0) {
+            Title.style.color = "red";
+            colorSelect++;
+        }
+        else
+        {
+            Title.style.color = "black";
+            Title.style.left = (value-20) + "px";
+            colorSelect--;
+        }
+}
+
+
+
+
+// this should be part of the view as well, the game history is visible, 
+function GameHistoryDebug(){
+    var debuginfo = document.getElementById("gameHistory");
+    var Selector = document.getElementById("gameType");
+    var SelectVal = Selector.options[Selector.selectedIndex].value;
+    var NameVal = document.getElementById("name").value;
+    debuginfo.innerHTML="Game Val: " + SelectVal + "  Name: " + NameVal;
+    //debuginfo.innerHTML= "Test";
+}
+function GameHistory(row, col){
+    var temp = "(" + (row+1);
+    temp += "," + (col+1) + ")";
+    GameHistoryUpdate("Selected = " + temp);
+}
+function GameHistoryUpdate(message)
+{
+    var paragraph = document.getElementById("gameHistory");
+    var temp = paragraph.innerHTML;
+    message += "<br>" + temp;
+    paragraph.innerHTML = message;
+}

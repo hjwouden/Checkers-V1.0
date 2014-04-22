@@ -66,48 +66,37 @@ var KingsBattleBoard = [0,3,0,3,0,3,0,3,
 ////////////////End Board Arrays///////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-var gameboard = document.getElementById("gameboard");
 newGame();
 
-AnimateTitle(); // move to the view
-
-CurrentGame = StartBoard;
-
-//function draws the starting Gameboard
-// this function should call somehting in the the view because it sets the view up. 
-function newGame(){  //
+function newGame(){  // checks game variations, sets up new game board
     var GameType = document.getElementById("gameType");
     var TypeVal = GameType.options[GameType.selectedIndex].value;
-    GameHistoryUpdate("Starting New Game");
-    if (TypeVal == "0") {
-        //normal game board
-    var k = 0;
-    for(var i = 0; i<8; i++){
-        for(var j = 0; j<8; j++){
-            var cell = gameboard.rows[i].cells[j];
-            if (StartBoard[k] == 1) {
-                cell.className = "redPC";
-            }
-            else if (StartBoard[k] == 2) {
-                cell.className = "whitePC";
-            }
-            k++;    
-        }
-    }
-    CurrentGame = StartBoard;
     
-    }//end if TypeVal == 0 normal game board
+    
+    if (TypeVal == "0") {
+        GameHistoryUpdate("Starting Checkers Game.");
+        drawCurrentGameBoard(StartBoard);
+        CurrentGame = StartBoard;
+    }
     else if (TypeVal == "1") { //outnumbered game board
         drawCurrentGameBoard(outNumberedBoard);
         CurrentGame = outNumberedBoard;
-    }//end if TypeVal == 1 outnumbered battle
+        GameHistoryUpdate("Starting Out-Numbered Checkers Game.");
+    }
     else if (TypeVal == "2") { //Kings Battle Game board
         drawCurrentGameBoard(KingsBattleBoard);
         CurrentGame = KingsBattleBoard;
-    }//end if TypeVal == 2 kings battle
-    GameHistoryUpdate("White goes first!");
+        GameHistoryUpdate("Starting Kings Battle Checkers Game.");
+    }
+    
+    //get the players names entered in the boxes.
+    //var redname = document.getElementById("redName").value;
+    var redname = document.getElementById("redName").value;
+    var whitename = document.getElementById("whiteName").value;
+    WhitePlayerName = whitename;
+    RedPlayerName = redname;
+    GameHistoryUpdate( WhitePlayerName + " goes first!");
 }
-
 
 //adding event handlers to table cells.
 var cells = document.getElementsByTagName("td");
@@ -129,17 +118,18 @@ var PieceHighlighted = 0; // if a piece is highlighted will be 1, else 0 meaning
 var HighlightedPieceNum = -1; // the number of the piece that is highlighted, so we can refer back to it, -1 when no piece is selected;
 var TotalRedPieces = 12;
 var TotalWhitePieces = 12;
+var RedPlayerName = "Red Player";
+var WhitePlayerName = "White Player;"
 
 function ChangeTurn(){ // rotate turns each
     if (PlayerTurn == 0) {
         PlayerTurn = 1;
-        GameHistoryUpdate("Reds Turn"); // make it for only a certain <p> tag
+        GameHistoryUpdate(RedPlayerName +"'s Turn"); // make it for only a certain <p> tag
     }
     else{
         PlayerTurn = 0;
-        GameHistoryUpdate("Whites Turn");
+        GameHistoryUpdate(WhitePlayerName + "'s Turn");
     }
-    // should write in the game log whos turn it is.
 }
 
 function CheckKingMe(){ // check to see if anyone needs to be kinged
@@ -147,33 +137,30 @@ function CheckKingMe(){ // check to see if anyone needs to be kinged
     {
         if (CurrentGame[i] == 2) {
             CurrentGame[i] = 4;
-            //display a king me message
+            GameHistoryUpdate(WhitePlayerName + " gets Kinged!");
         }
     }
     for(var i = 56; i<65; i++)
     {
         if (CurrentGame[i] == 1) {
             CurrentGame[i] = 3;
-            //display a king me message
+            GameHistoryUpdate(RedPlayerName + " gets Kinged!");
         }
     }
 }//end CheckKingMe();
 
-
-
 function MovePiece(from, to){ // move the piece.
     CurrentGame[to] = lastclickedPiece;
     CurrentGame[from] = 0;
+    
     //reset the variables
     PieceHighlighted = 0;
     lastclickedPiece = -1;
     lastclickedPosition = -1;
     
     CheckKingMe();
-    //Draw the new board
     drawCurrentGameBoard(CurrentGame);
     ChangeTurn();
-
 }//end MovePiece Function
 
 function InvalidMove(){ //move was not valid, reset variables and re-draw board
@@ -359,81 +346,26 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
     } // end else
 } // end the Click Event Handler.
 
-
 function JumpedPiece(position){
     if (CurrentGame[position] == 1 || CurrentGame[position] == 3) {
         CurrentGame[position] = 0;
         TotalRedPieces--;
-        GameHistoryUpdate("Red has " + TotalRedPieces + " pieces left");
+        GameHistoryUpdate(RedPlayerName + " has " + TotalRedPieces + " pieces left");
         // record lost pieces in game history
     }
     else if (CurrentGame[position] == 2 || CurrentGame[position] == 4) {
         CurrentGame[position] = 0;
         TotalWhitePieces--;
         //record lost pieces in game history
-        GameHistoryUpdate("White has " + TotalWhitePieces + " pieces left");
+        GameHistoryUpdate(WhitePlayerName + " has " + TotalWhitePieces + " pieces left");
     }
     if (TotalRedPieces == 0 || TotalWhitePieces == 0) {
         GameHistoryUpdate("Game Over!");
         if (TotalRedPieces == 0) {
-            GameHistoryUpdate("White Team Wins! <br>");
+            GameHistoryUpdate(WhitePlayerName + " Wins!");
         }
         else if (TotalWhitePieces == 0) {
-            GameHistoryUpdate(" Team Wins!");
+            GameHistoryUpdate(RedPlayerName + " Wins!");
         }
-        // Game over display who won.
-        //display winner in game history, dont allow any more moves.
     }
-}
-
-var RedPlayerName = "Red Player";
-var WhitePlayerName = "White Player;"
-
-// this should be part of the view as well, the game hisroty is visible, 
-function GameHistoryDebug(){
-    var debuginfo = document.getElementById("gameHistory");
-    var Selector = document.getElementById("gameType");
-    var SelectVal = Selector.options[Selector.selectedIndex].value;
-    var NameVal = document.getElementById("name").value;
-    debuginfo.innerHTML="Game Val: " + SelectVal + "  Name: " + NameVal;
-    //debuginfo.innerHTML= "Test";
-}
-function GameHistory(row, col){
-    //var paragraph = document.getElementById("gameHistory");
-    //paragraph.innerHTML="Selected = row: " + row + " col: " + col;
-    var temp = "Row: " + row;
-    temp += " Col: " + col;
-    GameHistoryUpdate("Selected = " + temp);
-}
-function GameHistoryUpdate(message)
-{
-    var paragraph = document.getElementById("gameHistory");
-    var temp = paragraph.innerHTML;
-    message += "<br>" + temp;
-    paragraph.innerHTML = message;
-}
-
-//move the the view.
-var Title = document.getElementById("TitleDiv");
-var value = 10;
-var colorSelect = 0;
-function AnimateTitle(){
-    var interval = setInterval(moveTitle, 150);
-    setTimeout(function(){ clearInterval(interval); }, 10000);
-    
-}
-//move to the view
-function moveTitle(){
-        value += 5;
-        Title.style.left = value + "px";
-        if (colorSelect == 0) {
-            Title.style.color = "red";
-            colorSelect++;
-        }
-        else
-        {
-            Title.style.color = "black";
-            Title.style.left = (value-20) + "px";
-            colorSelect--;
-        }
 }

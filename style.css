@@ -138,3 +138,7 @@ img{
     word-wrap : normal;
     overflow : scroll;
 }
+#redName{
+    background-color: red;
+    color : white;
+}
