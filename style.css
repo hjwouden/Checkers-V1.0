@@ -55,7 +55,7 @@
 #infoDiv{
     background: black;
     color: white;
-    width: 200px;
+    width: 400px;
     height: 500px;
     padding: 10px;
     border: 5px solid gray;
@@ -131,4 +131,10 @@ img{
     border-color: gold;
     background-color: white;
     text-align: center;
+}
+#gameHistory{
+    width : 400px;
+    height : 450px;
+    word-wrap : normal;
+    overflow : scroll;
 }
