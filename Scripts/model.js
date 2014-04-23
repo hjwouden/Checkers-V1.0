@@ -11,15 +11,17 @@
 //////////////////////////////////////////////////////////////
 ////////////////Board Arrays//////////////////////////////////
 
-//Array that is the layout of Starting Game
-var StartBoard = [0,1,0,1,0,1,0,1,
-                  1,0,1,0,1,0,1,0,
-                  0,1,0,1,0,1,0,1,
-                  0,0,0,0,0,0,0,0,
-                  0,0,0,0,0,0,0,0,
-                  2,0,2,0,2,0,2,0,
-                  0,2,0,2,0,2,0,2,
-                  2,0,2,0,2,0,2,0];
+function getStartBoard(){
+    var StartBoard = [0,1,0,1,0,1,0,1,
+                      1,0,1,0,1,0,1,0,
+                      0,1,0,1,0,1,0,1,
+                      0,0,0,0,0,0,0,0,
+                      0,0,0,0,0,0,0,0,
+                      2,0,2,0,2,0,2,0,
+                      0,2,0,2,0,2,0,2,
+                      2,0,2,0,2,0,2,0];
+    return StartBoard;
+}
 
 //Array shows all valid move locations
 //   valid moves have 1. invalid 0
@@ -33,17 +35,16 @@ var ValidMove = [0,1,0,1,0,1,0,1,
                  1,0,1,0,1,0,1,0,];
 
 //Array shows the current Game State
-var CurrentGame = [0,1,0,1,0,1,0,1,
-                   1,0,1,0,1,0,1,0,
-                   0,1,0,1,0,1,0,1,
+var CurrentGame = [0,0,0,0,0,0,0,0,
                    0,0,0,0,0,0,0,0,
                    0,0,0,0,0,0,0,0,
-                   2,0,2,0,2,0,2,0,
-                   0,2,0,2,0,2,0,2,
-                   2,0,2,0,2,0,2,0];
+                   0,0,0,0,0,0,0,0,
+                   0,0,0,0,0,0,0,0,
+                   0,0,0,0,0,0,0,0,
+                   0,0,0,0,0,0,0,0,
+                   0,0,0,0,0,0,0,0];
 
-
-//Game Board for Outnumbered Variation
+function getOutNumberedBoard() {
 var outNumberedBoard = [0,1,0,1,0,1,0,1,
                         1,0,1,0,1,0,1,0,
                         0,1,0,1,0,1,0,1,
@@ -52,8 +53,10 @@ var outNumberedBoard = [0,1,0,1,0,1,0,1,
                         0,0,0,0,0,0,0,0,
                         0,2,0,2,0,2,0,2,
                         2,0,2,0,2,0,2,0];
+    return outNumberedBoard;
+}
 
-//Game Board for Kings Battle Variation
+function getKingsBattleBoard(){
 var KingsBattleBoard = [0,3,0,3,0,3,0,3,
                         3,0,3,0,3,0,3,0,
                         0,3,0,3,0,3,0,3,
@@ -62,7 +65,8 @@ var KingsBattleBoard = [0,3,0,3,0,3,0,3,
                         4,0,4,0,4,0,4,0,
                         0,4,0,4,0,4,0,4,
                         4,0,4,0,4,0,4,0];
-
+    return KingsBattleBoard;
+}
 ////////////////End Board Arrays///////////////////////////////
 ///////////////////////////////////////////////////////////////
 
@@ -72,25 +76,25 @@ function newGame(){  // checks game variations, sets up new game board
     var GameType = document.getElementById("gameType");
     var TypeVal = GameType.options[GameType.selectedIndex].value;
     
-    
     if (TypeVal == "0") {
+        Reset();
+        drawCurrentGameBoard(getStartBoard());
+        CurrentGame = getStartBoard();
         GameHistoryUpdate("Starting Checkers Game.");
-        drawCurrentGameBoard(StartBoard);
-        CurrentGame = StartBoard;
     }
     else if (TypeVal == "1") { //outnumbered game board
-        drawCurrentGameBoard(outNumberedBoard);
-        CurrentGame = outNumberedBoard;
+        Reset();
+        TotalWhitePieces = 8;
+        drawCurrentGameBoard(getOutNumberedBoard());
+        CurrentGame = getOutNumberedBoard();
         GameHistoryUpdate("Starting Out-Numbered Checkers Game.");
     }
     else if (TypeVal == "2") { //Kings Battle Game board
-        drawCurrentGameBoard(KingsBattleBoard);
-        CurrentGame = KingsBattleBoard;
+        Reset();
+        drawCurrentGameBoard(getKingsBattleBoard());
+        CurrentGame = getKingsBattleBoard();
         GameHistoryUpdate("Starting Kings Battle Checkers Game.");
     }
-    
-    //get the players names entered in the boxes.
-    //var redname = document.getElementById("redName").value;
     var redname = document.getElementById("redName").value;
     var whitename = document.getElementById("whiteName").value;
     WhitePlayerName = whitename;
@@ -121,6 +125,16 @@ var TotalWhitePieces = 12;
 var RedPlayerName = "Red Player";
 var WhitePlayerName = "White Player;"
 
+function Reset(){
+    PlayerTurn = 0;
+    lastclickedPiece = -1;
+    lastclickedPosition = -1;
+    PieceHighlighted = 0;
+    HighlightedPieceNum = -1;
+    TotalRedPieces = 12;
+    TotalWhitePieces = 12;
+}
+
 function ChangeTurn(){ // rotate turns each
     if (PlayerTurn == 0) {
         PlayerTurn = 1;
@@ -137,6 +151,7 @@ function CheckKingMe(){ // check to see if anyone needs to be kinged
     {
         if (CurrentGame[i] == 2) {
             CurrentGame[i] = 4;
+            kingSound.play();
             GameHistoryUpdate(WhitePlayerName + " gets Kinged!");
         }
     }
@@ -144,6 +159,7 @@ function CheckKingMe(){ // check to see if anyone needs to be kinged
     {
         if (CurrentGame[i] == 1) {
             CurrentGame[i] = 3;
+            kingSound.play();
             GameHistoryUpdate(RedPlayerName + " gets Kinged!");
         }
     }
@@ -152,7 +168,7 @@ function CheckKingMe(){ // check to see if anyone needs to be kinged
 function MovePiece(from, to){ // move the piece.
     CurrentGame[to] = lastclickedPiece;
     CurrentGame[from] = 0;
-    
+    clickSound2.play();
     //reset the variables
     PieceHighlighted = 0;
     lastclickedPiece = -1;
@@ -169,11 +185,18 @@ function InvalidMove(){ //move was not valid, reset variables and re-draw board
     PieceHighlighted = 0;
     drawCurrentGameBoard(CurrentGame);
     GameHistoryUpdate("Invalid Move!");
+    invalidSound.play();
 } // end InvalidMove();
+
+var clickSound = new Audio("Sounds/FX1.mp3"); //clickSound.play();
+var clickSound2 = new Audio("Sounds/FX2.mp3");
+var invalidSound = new Audio("Sounds/FXinvalid.mp3");
+var winSound = new Audio("Sounds/FXwin.mp3");
+var jumpSound = new Audio("Sounds/FXjump.mp3");
+var kingSound = new Audio("Sounds/FXking.mp3");
 
 function squareClicked(row, col){ // Click Eventhandler for checkerboard,
     var converted = (row * 8) + col;
-
     if (PieceHighlighted == 1) {  // a piece is selected, check if moving, jumping, or highlight new piece
         
         if (ValidMove[converted] && (CurrentGame[converted] == 0)) { // square is black & open, validate move.
@@ -285,6 +308,7 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
                         if ( ((CurrentGame[converted + 7]) == 1) || (CurrentGame[converted  + 7] == 3) ) {
                             JumpedPiece(converted + 7);
                             MovePiece(lastclickedPosition, converted);
+                            
                         }
                         else{InvalidMove();}
                     }
@@ -315,6 +339,7 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
             //may first want to make sure that the last clicked var is free.
             lastclickedPiece = CurrentGame[converted];
             lastclickedPosition = converted;
+            clickSound.play();
         }
         else if (CurrentGame[converted] == 2 && PlayerTurn == 0) {
             //clicked on a white piece, highlight if first click
@@ -324,6 +349,7 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
             GameHistory(row, col);
             lastclickedPiece = CurrentGame[converted];
             lastclickedPosition = converted;
+            clickSound.play();
         }
         else if (CurrentGame[converted] == 3 && PlayerTurn == 1) {
             //clicked on a white piece, highlight if first click
@@ -333,6 +359,7 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
             GameHistory(row, col);
             lastclickedPiece = CurrentGame[converted];
             lastclickedPosition = converted;
+            clickSound.play();
         }
         else if (CurrentGame[converted] == 4 && PlayerTurn == 0) {
             //clicked on a white piece, highlight if first click
@@ -342,6 +369,7 @@ function squareClicked(row, col){ // Click Eventhandler for checkerboard,
             GameHistory(row, col);
             lastclickedPiece = CurrentGame[converted];
             lastclickedPosition = converted;
+            clickSound.play();
         }
     } // end else
 } // end the Click Event Handler.
@@ -350,12 +378,15 @@ function JumpedPiece(position){
     if (CurrentGame[position] == 1 || CurrentGame[position] == 3) {
         CurrentGame[position] = 0;
         TotalRedPieces--;
+        jumpSound.play();
         GameHistoryUpdate(RedPlayerName + " has " + TotalRedPieces + " pieces left");
+        
         // record lost pieces in game history
     }
     else if (CurrentGame[position] == 2 || CurrentGame[position] == 4) {
         CurrentGame[position] = 0;
         TotalWhitePieces--;
+        jumpSound.play();
         //record lost pieces in game history
         GameHistoryUpdate(WhitePlayerName + " has " + TotalWhitePieces + " pieces left");
     }
@@ -363,9 +394,11 @@ function JumpedPiece(position){
         GameHistoryUpdate("Game Over!");
         if (TotalRedPieces == 0) {
             GameHistoryUpdate(WhitePlayerName + " Wins!");
+            winSound.play();
         }
         else if (TotalWhitePieces == 0) {
             GameHistoryUpdate(RedPlayerName + " Wins!");
+            winSound.play();
         }
     }
 }

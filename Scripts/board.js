@@ -126,7 +126,7 @@ function drawCurrentGameBoard(movepieces){
     }
 }
 
-
+/* Don't Include in final Project
 AnimateTitle();
 
 //move the the view.
@@ -154,7 +154,7 @@ function moveTitle(){
         }
 }
 
-
+*/
 
 
 // this should be part of the view as well, the game history is visible, 
