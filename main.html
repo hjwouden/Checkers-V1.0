@@ -19,8 +19,7 @@
                 <option value="2">Kings Battle!</option>
             </select>
             <input type= "text" value="Red Player" id="redName">
-            <input type= "text" value="White Player" id="whiteName">
-            <a href = "index.html" target="_blank">How to play Checkers</a>
+            <input type= "text" value="White Player" id="whiteName">  
         </div>
            
         <div id="infoDiv">Game History: <br>
@@ -29,19 +28,23 @@
                 Enter your name to personalize!</p>
         </div>
            
-           
            <script src="Scripts/board.js"></script>
            <script src="Scripts/model.js"></script>
-           
            <a href = "checkpoint.html" target="_blank">Link to Game Logic Progress</a>
-           
+           <a href = "index.html" target="_blank">How to play Checkers</a>  
         <div id="LoginDiv">
             <p id="loggedAS">Log in on the description page!</p>
             <button type="button" onclick="clearStorage()";>Clear Login</button>
         </div>
-           
-        <script src="Scripts/getlogged.js"></script>   
         
+        <script src="Scripts/getlogged.js"></script>
+        
+        
+        <div id= "highscores">
+                <h2>Fastest Win Times!</h2>
+                <p id="scores"> 1. <br> 2.<br> 3. </p>
+        </div>
+        <script src="Scripts/fromxml.js"></script>
         
     </body>
 </html>
